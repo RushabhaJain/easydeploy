@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import uuid from "uuid";
 import simpleGit from "simple-git";
+import { getAllFiles } from "./file";
+import path from "path";
 
 const app = express();
 app.use(express.json());
@@ -14,10 +16,15 @@ app.post("/deploy", async (req, res) => {
     const outputPath = `output/${id}`;
 
     // Clone the repo at repoUrl and put it into outputPath
-    await simpleGit().clone(repoUrl, outputPath);
+    await simpleGit().clone(repoUrl, path.join(__dirname, outputPath));
 
-    console.log(repoUrl);
-    res.json({});
+    // Upload the cloned repo to S3
+    const files = await getAllFiles(path.join(__dirname, outputPath));
+    console.log(files);
+
+    res.json({
+      id,
+    });
   } else {
     res.status(400).send({
       status: "false",
