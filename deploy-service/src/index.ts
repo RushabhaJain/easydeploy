@@ -39,7 +39,7 @@ const kafka = new Kafka({
   await consumer.subscribe({ topic: KAFKA_TOPIC || "", fromBeginning: true });
 
   await consumer.run({
-    eachMessage: async ({ topic, partition, message }) => {
+    eachMessage: async ({ message }) => {
       console.log(message.value?.toString());
       const id = message.value?.toString();
       if (id) {
@@ -60,7 +60,10 @@ const kafka = new Kafka({
           await uploadFile(
             UPLOAD_BUCKET_NAME || "",
             file,
-            file.slice(localPath.length + 1)
+            path.join(
+              id,
+              file.slice(path.join(localPath, id, "dist").length + 1)
+            )
           );
         });
 
