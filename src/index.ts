@@ -4,6 +4,10 @@ import uuid from "uuid";
 import simpleGit from "simple-git";
 import { getAllFiles } from "./file";
 import path from "path";
+import dotenv from "dotenv";
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 app.use(express.json());
@@ -20,7 +24,6 @@ app.post("/deploy", async (req, res) => {
 
     // Upload the cloned repo to S3
     const files = await getAllFiles(path.join(__dirname, outputPath));
-    console.log(files);
 
     res.json({
       id,
