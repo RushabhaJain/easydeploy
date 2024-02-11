@@ -5,3 +5,7 @@ upload-service/.env
 deploy-service/node_modules/
 deploy-service/dist/
 deploy-service/.env
+
+reverse-proxy/node_modules/
+reverse-proxy/dist/
+reverse-proxy/.env
