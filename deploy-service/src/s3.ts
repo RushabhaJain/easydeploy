@@ -3,10 +3,12 @@ import {
   ListObjectsCommand,
   GetObjectCommand,
   PutObjectCommand,
+  PutObjectCommandInput,
 } from "@aws-sdk/client-s3";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
+const mime = require("mime-types");
 
 dotenv.config();
 
@@ -31,10 +33,11 @@ export async function uploadFile(
     const fileStream = fs.createReadStream(localFilePath);
 
     // Upload the file to s3
-    const uploadParams = {
+    const uploadParams: PutObjectCommandInput = {
       Bucket: bucket,
       Key: fileName,
       Body: fileStream,
+      ContentType: mime.lookup(localFilePath),
     };
 
     const uploadCommand = new PutObjectCommand(uploadParams);
