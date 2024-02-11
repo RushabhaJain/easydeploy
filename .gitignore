@@ -9,3 +9,7 @@ deploy-service/.env
 reverse-proxy/node_modules/
 reverse-proxy/dist/
 reverse-proxy/.env
+
+build-server/node_modules/
+build-server/dist/
+build-server/.env
