@@ -1,6 +1,6 @@
-upload-service/node_modules/
-upload-service/dist/
-upload-service/.env
+api-server/node_modules/
+api-server/dist/
+api-server/.env
 
 deploy-service/node_modules/
 deploy-service/dist/
