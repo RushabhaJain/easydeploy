@@ -3,8 +3,23 @@ const path = require("path");
 const fs = require("fs");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const mime = require("mime-types");
+const Redis = require("ioredis");
 const dotenv = require("dotenv");
 dotenv.config();
+
+let publisher;
+if (process.env.REDIS_URL) {
+  publisher = new Redis(process.env.REDIS_URL);
+  console.log("Publisher connected!");
+}
+const PROJECT_ID = process.env.PROJECT_ID || "random-id";
+
+const publishLog = (message) => {
+  if (publisher) {
+    publisher.publish(`logs:${PROJECT_ID}`, message);
+  }
+  console.log(message);
+};
 
 const s3Client = new S3Client({
   region: process.env.REGION,
@@ -13,8 +28,6 @@ const s3Client = new S3Client({
     secretAccessKey: process.env.SECRET_ACCESS_KEY,
   },
 });
-
-const PROJECT_ID = process.env.PROJECT_ID;
 
 function getAllFiles(folderPath) {
   let response = [];
@@ -32,7 +45,7 @@ function getAllFiles(folderPath) {
 }
 
 async function init() {
-  console.log("Building the project...");
+  publishLog("Building the project...");
   const outDirPath = path.join(__dirname, "output");
   const p = exec(`cd ${outDirPath} && npm install && npm run build`);
   p.stdout.on("data", function (data) {
@@ -44,8 +57,8 @@ async function init() {
   });
 
   p.on("close", async () => {
-    console.log("Build completed!");
-    console.log("Uploading files to S3...");
+    publishLog("Build completed!");
+    publishLog("Uploading files to S3...");
     // Get all the files to upload to S3
     const artifactPath = path.join(outDirPath, "dist");
     const files = getAllFiles(artifactPath);
@@ -57,10 +70,11 @@ async function init() {
         Body: fs.createReadStream(file),
         ContentType: mime.lookup(file),
       });
+      publishLog("Uploading file: " + file);
       await s3Client.send(command);
     }
-    console.log("Upload process completed!");
-    console.log("App successfully deployed!");
+    publishLog("Upload process completed!");
+    publishLog("App successfully deployed!");
   });
 }
 

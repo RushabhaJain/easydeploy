@@ -12,6 +12,7 @@ const {
   BUCKET_SECRET_KEY,
   BUCKET_REGION,
   BUCKET_NAME,
+  REDIS_URL,
 } = process.env;
 
 if (
@@ -77,7 +78,7 @@ export const scheduleDeployment = async (gitUrl: string, projectId: string) => {
             containers: [
               {
                 name: "build-server",
-                image: "csz3qe/build-server:v1",
+                image: "csz3qe/build-server:v2",
                 env: [
                   {
                     name: "PROJECT_ID",
@@ -102,6 +103,10 @@ export const scheduleDeployment = async (gitUrl: string, projectId: string) => {
                   {
                     name: "GIT_REPOSITORY__URL",
                     value: gitUrl,
+                  },
+                  {
+                    name: "REDIS_URL",
+                    value: REDIS_URL,
                   },
                 ],
               },
