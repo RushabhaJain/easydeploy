@@ -78,7 +78,7 @@ export const scheduleDeployment = async (gitUrl: string, projectId: string) => {
             containers: [
               {
                 name: "build-server",
-                image: "csz3qe/build-server:v2",
+                image: "csz3qe/build-server:v4",
                 env: [
                   {
                     name: "PROJECT_ID",

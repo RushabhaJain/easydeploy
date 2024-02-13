@@ -49,7 +49,7 @@ async function init() {
   const outDirPath = path.join(__dirname, "output");
   const p = exec(`cd ${outDirPath} && npm install && npm run build`);
   p.stdout.on("data", function (data) {
-    console.log(data.toString());
+    publishLog(data.toString());
   });
 
   p.stdout.on("error", function (data) {
